@@ -413,8 +413,8 @@ void puzzleToDisplay(const Puzzle* puzzle,
         display->symbols[i] = kSymbols[puzzle->symbols[i]];
         display->digits[i] = (puzzle->digits[i] == kInvalidDigit) ? kErrorDigit
                            : (puzzle->digits[i] == kEmptyDigit) ? kNoneSeven
+                           : (puzzle->digits[i] == 11) ? kNumberEleven
                            : kDigits[puzzle->digits[i]];
-
     }
 }
 
