@@ -89,7 +89,7 @@ void initializeDigitMap(int8_t digit_map[]) {
 
     // all digits representations
     for (int digit = 0; digit < DIGITS_COUNT; ++digit) {
-        digit_map[kDigits[digit]] = digit;
+        digit_map[kDigits[digit]] = (int8_t)digit;
     }
 
     // special case, 11
@@ -103,7 +103,7 @@ void initializeSymbolMap(int8_t symbol_map[]) {
 
     symbol_map[kNoneSymbol] = kSymbolEmpty;
     for (int symbol = 0; symbol < SYMBOLS_COUNT; ++symbol) {
-        symbol_map[kSymbols[symbol]] = symbol;
+        symbol_map[kSymbols[symbol]] = (int8_t)symbol;
     }
 }
 
@@ -461,9 +461,9 @@ void printPuzzleAsText(const Puzzle* puzzle)
     putchar('\n');
 }
 
-void scanPuzzleFromText(Puzzle* puzzle) {
-    // TODO
-}
+// void scanPuzzleFromText(Puzzle* puzzle) {
+//     // TODO
+// }
 
 int getIthBit(const PuzzleDisplay* puzzle, int bit_id) {
     int i = bit_id / (7 + 5);
@@ -496,8 +496,8 @@ uint32_t pcg32_random_r(pcg32_random_t* rng)
     // Advance internal state
     rng->state = oldstate * 6364136223846793005ULL + (rng->inc|1);
     // Calculate output function (XSH RR), uses old state for max ILP
-    uint32_t xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
-    uint32_t rot = oldstate >> 59u;
+    uint32_t xorshifted = (uint32_t)(((oldstate >> 18u) ^ oldstate) >> 27u);
+    uint32_t rot = (uint32_t)(oldstate >> 59u);
     return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
 
@@ -530,7 +530,7 @@ int main(int argc, char* args[]) {
     initializeDigitMap(digit_display_to_value);
     initializeSymbolMap(symbol_display_to_value);
 
-    pcg32_random_t rng = {time(NULL), 3};
+    pcg32_random_t rng = {(uint64_t)time(NULL), 3};
     
     // Let's try and find a random puzzle solution, then change it to get
     // a puzzle
@@ -542,8 +542,8 @@ int main(int argc, char* args[]) {
     solution.size = puzzle.size = puzzle_size;
         
     while (1) {
-        int digit_v = pcg32_random_r(&rng) % digit_v_limit;
-        int symbol_v = pcg32_random_r(&rng) % symbol_v_limit;
+        int digit_v = (int)pcg32_random_r(&rng) % digit_v_limit;
+        int symbol_v = (int)pcg32_random_r(&rng) % symbol_v_limit;
         for (int i = 0; i < puzzle_size; ++i) {
             solution.digits[i] = digit_v % 11;
             digit_v /= 11;
@@ -581,10 +581,12 @@ int main(int argc, char* args[]) {
                 if (getIthBit(&solution_display, add_position) != 0) {
                     continue;
                 }
+
                 flipIthBit(&puzzle_display, add_position);
                 puzzleDisplayToPuzzle(&puzzle_display, &puzzle);
                 if (isValidStartPuzzle(&puzzle)) {
                     printPuzzleAsText(&puzzle);
+                    printPuzzleAsText(&solution);
                     return 0;
                 }
 
