@@ -29,7 +29,7 @@ const enum DigitDisplay kDigits[DIGITS_COUNT] = {
     kTopMid | kTopRight | kBotRight,                                 // 7
     kTopMid | kTopLeft | kTopRight | kMidMid | kBotLeft
             | kBotMid | kBotRight,                                   // 8
-    kTopMid | kTopLeft | kTopRight | kMidMid | kBotMid | kBotRight,  // 9  
+    kTopMid | kTopLeft | kTopRight | kMidMid | kBotMid | kBotRight,  // 9
 };
 
 const enum DigitDisplay kNumberEleven = kTopLeft | kTopRight
@@ -128,7 +128,7 @@ void printDigit(int digit) {
     for (int i = 0; i < 4; ++i) {
         printf("%c    %c\n", bot_left_fill, bot_right_fill);
     }
-    
+
     puts(bot_mid_fill == '#' ? "######" : "      ");
 }
 
@@ -186,7 +186,7 @@ void printSymbol(SymbolName symbol) {
         "  #  ",
         "  #  "
     };
-    
+
     if (symbol_display & kHorizontal1) {
         addSymbolSegments(symbol_screen, dash1);
     }
@@ -202,7 +202,7 @@ void printSymbol(SymbolName symbol) {
     if (symbol_display & kVertical) {
         addSymbolSegments(symbol_screen, vertical);
     }
-    
+
     for (int i = 0; i < 5; ++i) {
         puts(symbol_screen[i]);
     }
@@ -319,7 +319,7 @@ int evaluatePuzzleSide(const Puzzle* puzzle, int start, int length) {
     }
 
     // then, apply addition and subtraction
-    
+
     // then, apply multiplications and divisions
     for (int i = 1; i < length; ++i) {
         if (symbols[i] != kSymbolPlus &&
@@ -378,7 +378,7 @@ int isValidEndPuzzle(const Puzzle* puzzle) {
             return 0;
         }
     }
-    
+
     for (int i = 0; i < puzzle->size; ++i) {
         if (puzzle->digits[i] == kInvalidDigit) {
             return 0;
@@ -402,7 +402,7 @@ void puzzleDisplayToPuzzle(const PuzzleDisplay* display,
     puzzle->size = display->size;
     for (int i = 0; i < puzzle->size; ++i) {
         puzzle->symbols[i] = symbol_display_to_value[display->symbols[i]];
-        puzzle->digits[i] = digit_display_to_value[display->digits[i]]; 
+        puzzle->digits[i] = digit_display_to_value[display->digits[i]];
     }
 }
 
@@ -410,11 +410,11 @@ void puzzleToDisplay(const Puzzle* puzzle,
                      PuzzleDisplay* display) {
     display->size = puzzle->size;
     for (int i = 0; i < puzzle->size; ++i) {
-        display->symbols[i] = kSymbols[puzzle->symbols[i]];    
+        display->symbols[i] = kSymbols[puzzle->symbols[i]];
         display->digits[i] = (puzzle->digits[i] == kInvalidDigit) ? kErrorDigit
                            : (puzzle->digits[i] == kEmptyDigit) ? kNoneSeven
                            : kDigits[puzzle->digits[i]];
-    
+
     }
 }
 
@@ -426,19 +426,19 @@ void printPuzzleAsText(const Puzzle* puzzle)
         case kSymbolPlus:
             putchar('+');
             break;
-        
+
         case kSymbolMinus:
             putchar('-');
             break;
-        
+
         case kSymbolMultiply:
             putchar('*');
             break;
-        
+
         case kSymbolDivide:
             putchar('/');
             break;
-        
+
         case kSymbolEqual:
             putchar('=');
             break;
@@ -446,11 +446,11 @@ void printPuzzleAsText(const Puzzle* puzzle)
         case kSymbolInvalid:
             putchar('?');
             break;
-        
+
         case kSymbolEmpty:
             break;
         }
-        
+
         if (puzzle->digits[i] >= 0) {
             printf("%d", puzzle->digits[i]);
         } else if (puzzle->digits[i] == kEmptyDigit) {
@@ -481,7 +481,7 @@ void flipIthBit(PuzzleDisplay* puzzle, int bit_id) {
     assert(i < puzzle->size);
 
     if (bit < 7) puzzle->digits[i] ^= (1 << bit);
-    
+
     else         puzzle->symbols[i] ^= (1 << (bit - 7));
 }
 
@@ -531,7 +531,7 @@ int main(int argc, char* args[]) {
     initializeSymbolMap(symbol_display_to_value);
 
     pcg32_random_t rng = {(uint64_t)time(NULL), 3};
-    
+
     // Let's try and find a random puzzle solution, then change it to get
     // a puzzle
     int digit_v_limit = power(11, puzzle_size);
@@ -540,7 +540,7 @@ int main(int argc, char* args[]) {
     Puzzle solution;
     Puzzle puzzle;
     solution.size = puzzle.size = puzzle_size;
-        
+
     while (1) {
         int digit_v = (int)pcg32_random_r(&rng) % digit_v_limit;
         int symbol_v = (int)pcg32_random_r(&rng) % symbol_v_limit;
@@ -557,7 +557,7 @@ int main(int argc, char* args[]) {
         }
 
         //printPuzzleAsText(&solution);
-        
+
         PuzzleDisplay solution_display;
         puzzleToDisplay(&solution, &solution_display);
         PuzzleDisplay puzzle_display = solution_display;
@@ -570,11 +570,11 @@ int main(int argc, char* args[]) {
                 continue;
             }
             flipIthBit(&puzzle_display, remove_position);
-            
+
             for (int add_position = 0;
                  add_position < puzzle_size * (7 + 5);
                  ++add_position) {
-                if (add_position == remove_position) { 
+                if (add_position == remove_position) {
                     continue;
                 }
 
@@ -593,7 +593,7 @@ int main(int argc, char* args[]) {
                 flipIthBit(&puzzle_display, add_position);
             }
 
-            
+
             flipIthBit(&puzzle_display, remove_position);
         }
 
